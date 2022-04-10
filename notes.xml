@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<x:notes xmlns:x="http://www.epam.tc.com/note"
+<notes xmlns:x="http://www.epam.tc.com/note"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.epam.tc.com/note notes.xsd">
 
@@ -32,6 +32,6 @@
 	</note>
 
 
-</x:notes>
+</notes>
 
 

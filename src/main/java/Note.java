@@ -1,9 +1,10 @@
 public class Note {
-    private int id;
     private String to;
     private String from;
     private String heading;
     private String body;
+    private int id;
+
 
     public int getId() {
         return id;
@@ -43,5 +44,16 @@ public class Note {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "Note :" +
+                "to='" + to + '\'' +
+                ", from='" + from + '\'' +
+                ", heading='" + heading + '\'' +
+                ", body='" + body + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

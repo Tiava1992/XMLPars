@@ -23,30 +23,22 @@ public class Handler extends DefaultHandler {
     }
 
     @Override
-    public void endDocument() throws SAXException {
-        System.out.println("Закончился парсинг");
-    }
-
-    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        System.out.println("Start element--->"+"uri"+ uri+ ", LocalName"+localName+" , qName"+ qName +
-                ", attributes"+ attributes);
-
-        text=new StringBuilder();
-        if(text.equals("note")){
+        if(qName.equals("note")){
             note=new Note();
-            note.setId(Integer.parseInt(attributes.getValue("id")));
+             note.setId(Integer.parseInt(attributes.getValue("id")));
         }
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+        text=new StringBuilder();
          text.append(ch, start,length);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-    TagName tagName= TagName.valueOf(qName.toUpperCase().replace("-", "_"));
+    TagName tagName= TagName.valueOf(qName.toUpperCase());
     switch (tagName){
         case TO:
             note.setTo(text.toString());
@@ -64,21 +56,25 @@ public class Handler extends DefaultHandler {
             noteList.add(note);
             note=null;
             break;
-
     }
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        System.out.println("Закончился парсинг");
     }
 
     @Override
     public void warning(SAXParseException e) throws SAXException {
-        System.err.println("WARNING!! LINE +" );
+        System.err.println("WARNING!! LINE "+e.getLineNumber()+" : "+ e.getMessage() );
     }
 
     @Override
     public void error(SAXParseException e) throws SAXException {
-        System.err.println("ERRRRRROR!!!!!");    }
+        System.err.println("EROR! LINE "+e.getLineNumber()+" : "+ e.getMessage() );    }
 
     @Override
     public void fatalError(SAXParseException e) throws SAXException {
-        System.err.println("FATAL EROOOOOOOOR!!!!!");     }
+        System.err.println("FATAL ERROR! LINE "+e.getLineNumber()+" : "+ e.getMessage() );     }
 
 }

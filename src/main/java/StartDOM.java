@@ -1,9 +1,7 @@
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -12,38 +10,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StartDOM {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         File file = new File("notes.xml");
+        // Список для сотрудников из XML файла
+        ArrayList<Note> notes = new ArrayList<>();
 
-        DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
-        Document doc=null;
+        // Получение фабрики, чтобы после получить билдер документов.
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // Получили из фабрики билдер, который парсит XML, создает структуру Document в виде иерархического дерева.
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        // Запарсили XML, создав структуру Document. Теперь у нас есть доступ ко всем элементам, каким нам нужно.
+        Document document = builder.parse(new File("notes.xml"));
+        // Получение списка всех элементов note внутри корневого элемента (getDocumentElement возвращает ROOT элемент XML файла).
+        NodeList noteElements = document.getDocumentElement().getElementsByTagName("note");
 
-        try {
-            doc=dbf.newDocumentBuilder().parse(file);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-
-
-        Node rootNode=doc.getFirstChild();
-        System.out.println(rootNode.getNodeName());
-        NodeList rootChilds=rootNode.getChildNodes();
-
-
-        List<Note> notes=new ArrayList<>();
-        String mainName=null;
-        for(int i=0; i<rootChilds.getLength(); i++){
-            if(rootChilds.item(i).getNodeType() != Node.ELEMENT_NODE){  // убираем пробелы (пустые места)
-                continue;
-            }
-            System.out.println(rootChilds.item(i).getNodeName());
+        // Перебор всех элементов note
+        for (int i = 0; i < noteElements.getLength(); i++) {
             Note note=new Note();
-            Element noteElement= (Element) note.NO
+            Element noteElement = (Element) noteElements.item(i);
 
+            // Получение атрибуты каждого элемента
+            NamedNodeMap attributes = noteElement.getAttributes();
+
+            // Добавление сотрудника. Атрибут - тоже Node, потому нам нужно получить значение атрибута с помощью метода getNodeValue()
+            note.setId(Integer.parseInt(attributes.getNamedItem("id").getNodeValue()));
+            note.setTo(getSingleChild(noteElement, "to").getTextContent().trim());
+            note.setFrom(getSingleChild(noteElement, "from").getTextContent().trim());
+            note.setHeading(getSingleChild(noteElement, "heading").getTextContent().trim());
+            note.setBody(getSingleChild(noteElement, "body").getTextContent().trim());
+
+            notes.add(note);
+            System.out.println(note);
         }
+    }
+
+    private static Element getSingleChild (Element element, String childName){
+        NodeList nlist= element.getElementsByTagName(childName);
+        Element child=(Element) nlist.item(0);
+        return child;
     }
 }
